@@ -28,19 +28,23 @@ pygame.init()
 
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption('Animation Intro')
+
 bg_image = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
 
-card = SpriteSheet('assets/deck_of_cards.png')
-x_margin = 11
-y_margin = 2
-x_pad = 22
-y_pad = 4
+# card = SpriteSheet('assets/deck_of_cards.png')
+# x_margin = 11
+# y_margin = 2
+# x_pad = 22
+# y_pad = 4
 
 # card_list = card.load_grid_images(4, 14, x_margin, x_pad, y_margin, y_pad)
 # print(card_list)
-ace_hearts = card.image_at((11, 2, 43, 59))
+# ace_hearts = card.image_at((11, 2, 43, 59))
 
+cpa = SpriteSheet('assets/cpa_.png')
+
+stone_wall = cpa.image_at((0, 192, 64, 64))
 
 clock = pygame.time.Clock()
 
@@ -55,19 +59,47 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    screen.fill(BLUE)
+    screen.fill(WHITE)
     for i in range(1, WIN_WIDTH // tile_size):
         pygame.draw.rect(screen, WHITE, (i*tile_size, 0, 3, WIN_HEIGHT))
 
     for j in range(1, WIN_HEIGHT // tile_size):
         pygame.draw.rect(screen, WHITE, (0, j*tile_size, WIN_WIDTH, 3))
 
-    screen.blit(ace_hearts, (100, 100))
+    screen.blit(stone_wall, (0, WIN_HEIGHT - 64))
     pygame.display.flip()
 
     clock.tick(FPS)
 
 # outside of game loop
 pygame.quit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

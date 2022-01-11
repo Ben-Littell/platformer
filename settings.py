@@ -1,3 +1,6 @@
+WIDTH = 1000
+HEIGHT = 700
+TILE_SIZE = (40, 40)
 # WIDTH = 1000
 # HEIGHT = 700
 # tile_size = (50, 50)
