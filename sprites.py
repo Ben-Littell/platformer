@@ -43,7 +43,7 @@ class SpriteSheet:
         return self.images_at(tups, colorkey)
 
     def load_grid_images(self, num_rows, num_cols, x_margin=0, x_padding=0,
-                         y_margin=0, y_padding=0):
+                         y_margin=0, y_padding=0, width=None, height=None, colorkey=None):
         """Load a grid of images.
         x_margin is the space between the top of the sheet and top of the first
         row. x_padding is space between rows. Assumes symmetrical padding on
@@ -57,10 +57,14 @@ class SpriteSheet:
         # To calculate the size of each sprite, subtract the two margins,
         #   and the padding between each row, then divide by num_cols.
         # Same reasoning for y.
-        x_sprite_size = (sheet_width - 2 * x_margin
-                         - (num_cols - 1) * x_padding) / num_cols
-        y_sprite_size = (sheet_height - 2 * y_margin
-                         - (num_rows - 1) * y_padding) / num_rows
+        if width and height:
+            x_sprite_size = width
+            y_sprite_size = height
+        else:
+            x_sprite_size = (sheet_width - 2 * x_margin
+                             - (num_cols - 1) * x_padding) / num_cols
+            y_sprite_size = (sheet_height - 2 * y_margin
+                             - (num_rows - 1) * y_padding) / num_rows
 
         sprite_rects = []
         for row_num in range(num_rows):
@@ -71,4 +75,4 @@ class SpriteSheet:
                 y = y_margin + row_num * (y_sprite_size + y_padding)
                 sprite_rect = (x, y, x_sprite_size, y_sprite_size)
                 sprite_rects.append(sprite_rect)
-        return self.images_at(sprite_rects)
+        return self.images_at(sprite_rects, colorkey)

@@ -43,9 +43,13 @@ bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
 # ace_hearts = card.image_at((11, 2, 43, 59))
 
 cpa = SpriteSheet('assets/cpa_.png')
+blue_knight_s = SpriteSheet('assets/BlueKnight.png')
 
 stone_wall = cpa.image_at((0, 192, 64, 64))
+stone_wall = pygame.transform.scale(stone_wall, (40, 40))
 
+blue_knight = blue_knight_s.image_at((42, 570, 39, 50), -1)
+blue_knight = pygame.transform.flip(blue_knight, True, False)
 clock = pygame.time.Clock()
 
 running = True
@@ -59,14 +63,18 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    screen.fill(WHITE)
-    for i in range(1, WIN_WIDTH // tile_size):
-        pygame.draw.rect(screen, WHITE, (i*tile_size, 0, 3, WIN_HEIGHT))
+    screen.fill(MIDNIGHT_BLUE)
+    # for i in range(1, WIN_WIDTH // tile_size):
+    #     pygame.draw.rect(screen, WHITE, (i*tile_size, 0, 3, WIN_HEIGHT))
+    #
+    # for j in range(1, WIN_HEIGHT // tile_size):
+    #     pygame.draw.rect(screen, WHITE, (0, j*tile_size, WIN_WIDTH, 3))
+    for j in range(4):
+        for i in range(0, WIN_WIDTH//40):
+            screen.blit(stone_wall, (i * 40, WIN_HEIGHT - 40 * j))
 
-    for j in range(1, WIN_HEIGHT // tile_size):
-        pygame.draw.rect(screen, WHITE, (0, j*tile_size, WIN_WIDTH, 3))
+    screen.blit(blue_knight, (40, WIN_HEIGHT - 160 - 50))
 
-    screen.blit(stone_wall, (0, WIN_HEIGHT - 64))
     pygame.display.flip()
 
     clock.tick(FPS)
