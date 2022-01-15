@@ -16,4 +16,4 @@ FPS = 60
 
 WIN_WIDTH = 800
 WIN_HEIGHT = 600
-tile_size = 50
+tile_size = 40

@@ -41,13 +41,21 @@ bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
 # card_list = card.load_grid_images(4, 14, x_margin, x_pad, y_margin, y_pad)
 # print(card_list)
 # ace_hearts = card.image_at((11, 2, 43, 59))
+########################################## SPRITE GROUPS ###############################################################
 
+########################################################################################################################
 cpa = SpriteSheet('assets/cpa_.png')
+dr2a = SpriteSheet('assets/dr2a.png')
 blue_knight_s = SpriteSheet('assets/BlueKnight.png')
+
 
 stone_wall = cpa.image_at((0, 192, 64, 64))
 stone_wall = pygame.transform.scale(stone_wall, (40, 40))
 
+dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
+dark_stone_block = pygame.transform.scale(dark_stone_block, (40, 40))
+
+knight_height = 50
 blue_knight = blue_knight_s.image_at((42, 570, 39, 50), -1)
 blue_knight = pygame.transform.flip(blue_knight, True, False)
 clock = pygame.time.Clock()
@@ -64,17 +72,34 @@ while running:
             running = False
 
     screen.fill(MIDNIGHT_BLUE)
+
+    for j in range(4):
+        for i in range(0, WIN_WIDTH//tile_size):
+            screen.blit(stone_wall, (i * tile_size, WIN_HEIGHT - tile_size * j))
+
+    for i in range(12):
+        screen.blit(stone_wall, (0, tile_size * i))
+    for i in range(12):
+        screen.blit(stone_wall, (WIN_WIDTH - tile_size, tile_size * i))
+    for i in range(1, 19):
+        screen.blit(stone_wall, (tile_size * i, 0))
+
+    screen.blit(dark_stone_block, (tile_size * 4, tile_size * 4))
+    screen.blit(dark_stone_block, (tile_size * 5, tile_size * 5))
+    screen.blit(dark_stone_block, (tile_size * 6, tile_size * 5))
+    screen.blit(dark_stone_block, (tile_size * 6, tile_size * 11))
+    screen.blit(dark_stone_block, (tile_size * 8, tile_size * 10))
+    screen.blit(dark_stone_block, (tile_size * 9, tile_size * 9))
+    screen.blit(dark_stone_block, (tile_size * 8, tile_size * 7))
+
     # for i in range(1, WIN_WIDTH // tile_size):
     #     pygame.draw.rect(screen, WHITE, (i*tile_size, 0, 3, WIN_HEIGHT))
     #
     # for j in range(1, WIN_HEIGHT // tile_size):
     #     pygame.draw.rect(screen, WHITE, (0, j*tile_size, WIN_WIDTH, 3))
-    for j in range(4):
-        for i in range(0, WIN_WIDTH//40):
-            screen.blit(stone_wall, (i * 40, WIN_HEIGHT - 40 * j))
 
-    screen.blit(blue_knight, (40, WIN_HEIGHT - 160 - 50))
-
+    # screen.blit(dark_stone_block, (tile_size * 4, WIN_HEIGHT - tile_size * 4))
+    screen.blit(blue_knight, (40, WIN_HEIGHT - tile_size * 4 - 10))
     pygame.display.flip()
 
     clock.tick(FPS)

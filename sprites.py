@@ -76,3 +76,6 @@ class SpriteSheet:
                 sprite_rect = (x, y, x_sprite_size, y_sprite_size)
                 sprite_rects.append(sprite_rect)
         return self.images_at(sprite_rects, colorkey)
+
+
+
