@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 from settings import *
-from sprites import SpriteSheet
+from sprites import SpriteSheet, Player
 
 pygame.init()
 
@@ -48,12 +48,14 @@ cpa = SpriteSheet('assets/cpa_.png')
 dr2a = SpriteSheet('assets/dr2a.png')
 blue_knight_s = SpriteSheet('assets/BlueKnight.png')
 
-
 stone_wall = cpa.image_at((0, 192, 64, 64))
-stone_wall = pygame.transform.scale(stone_wall, (40, 40))
+stone_wall = pygame.transform.scale(stone_wall, (tile_size, tile_size))
+
+wood_door = cpa.image_at((194, 385, 58, 126))
+wood_door = pygame.transform.scale(wood_door, (tile_size, tile_size * 2))
 
 dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
-dark_stone_block = pygame.transform.scale(dark_stone_block, (40, 40))
+dark_stone_block = pygame.transform.scale(dark_stone_block, (tile_size, tile_size))
 
 knight_height = 50
 blue_knight = blue_knight_s.image_at((42, 570, 39, 50), -1)
@@ -91,6 +93,8 @@ while running:
     screen.blit(dark_stone_block, (tile_size * 8, tile_size * 10))
     screen.blit(dark_stone_block, (tile_size * 9, tile_size * 9))
     screen.blit(dark_stone_block, (tile_size * 8, tile_size * 7))
+
+    screen.blit(wood_door, (tile_size * 18, tile_size * 10))
 
     # for i in range(1, WIN_WIDTH // tile_size):
     #     pygame.draw.rect(screen, WHITE, (i*tile_size, 0, 3, WIN_HEIGHT))
