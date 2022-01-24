@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 from settings import *
-from sprites import SpriteSheet, Player
+from sprites import SpriteSheet, Player, Level
 
 pygame.init()
 
@@ -48,7 +48,7 @@ clock = pygame.time.Clock()
 
 running = True
 ########################################################################################################################
-
+level1 = Level(LAYOUT, tile_size)
 ########################################################################################################################
 # game loop
 while running:
@@ -58,27 +58,28 @@ while running:
             running = False
 
     screen.fill(MIDNIGHT_BLUE)
+    level1.draw(screen)
 
-    for j in range(4):
-        for i in range(0, WIN_WIDTH//tile_size):
-            screen.blit(stone_wall, (i * tile_size, WIN_HEIGHT - tile_size * j))
-
-    for i in range(12):
-        screen.blit(stone_wall, (0, tile_size * i))
-    for i in range(12):
-        screen.blit(stone_wall, (WIN_WIDTH - tile_size, tile_size * i))
-    for i in range(1, 19):
-        screen.blit(stone_wall, (tile_size * i, 0))
-
-    screen.blit(dark_stone_block, (tile_size * 4, tile_size * 4))
-    screen.blit(dark_stone_block, (tile_size * 5, tile_size * 5))
-    screen.blit(dark_stone_block, (tile_size * 6, tile_size * 5))
-    screen.blit(dark_stone_block, (tile_size * 6, tile_size * 11))
-    screen.blit(dark_stone_block, (tile_size * 8, tile_size * 10))
-    screen.blit(dark_stone_block, (tile_size * 9, tile_size * 9))
-    screen.blit(dark_stone_block, (tile_size * 8, tile_size * 7))
-
-    screen.blit(wood_door, (tile_size * 18, tile_size * 10))
+    # for j in range(4):
+    #     for i in range(0, WIN_WIDTH//tile_size):
+    #         screen.blit(stone_wall, (i * tile_size, WIN_HEIGHT - tile_size * j))
+    #
+    # for i in range(12):
+    #     screen.blit(stone_wall, (0, tile_size * i))
+    # for i in range(12):
+    #     screen.blit(stone_wall, (WIN_WIDTH - tile_size, tile_size * i))
+    # for i in range(1, 19):
+    #     screen.blit(stone_wall, (tile_size * i, 0))
+    #
+    # screen.blit(dark_stone_block, (tile_size * 4, tile_size * 4))
+    # screen.blit(dark_stone_block, (tile_size * 5, tile_size * 5))
+    # screen.blit(dark_stone_block, (tile_size * 6, tile_size * 5))
+    # screen.blit(dark_stone_block, (tile_size * 6, tile_size * 11))
+    # screen.blit(dark_stone_block, (tile_size * 8, tile_size * 10))
+    # screen.blit(dark_stone_block, (tile_size * 9, tile_size * 9))
+    # screen.blit(dark_stone_block, (tile_size * 8, tile_size * 7))
+    #
+    # screen.blit(wood_door, (tile_size * 18, tile_size * 10))
 
     # for i in range(1, WIN_WIDTH // tile_size):
     #     pygame.draw.rect(screen, WHITE, (i*tile_size, 0, 3, WIN_HEIGHT))
@@ -87,7 +88,7 @@ while running:
     #     pygame.draw.rect(screen, WHITE, (0, j*tile_size, WIN_WIDTH, 3))
 
     # screen.blit(dark_stone_block, (tile_size * 4, WIN_HEIGHT - tile_size * 4))
-    screen.blit(blue_knight, (40, WIN_HEIGHT - tile_size * 4 - 10))
+    # screen.blit(blue_knight, (40, WIN_HEIGHT - tile_size * 4 - 10))
     pygame.display.flip()
 
     clock.tick(FPS)

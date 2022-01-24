@@ -89,8 +89,12 @@ class Level:
         wood_door = pygame.transform.scale(wood_door, (tile_size, tile_size * 2))
         dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
         dark_stone_block = pygame.transform.scale(dark_stone_block, (tile_size, tile_size))
-        blue_knight = blue_knight_s.image_at((42, 570, 39, 50), -1)
-        blue_knight = pygame.transform.flip(blue_knight, True, False)
+
+        blue_knight1 = blue_knight_s.image_at((42, 570, 39, 50), -1)
+        blue_knight1 = pygame.transform.flip(blue_knight1, True, False)
+
+        blue_knight_run = blue_knight_s.load_strip((41, 385, 48, 48), 10, -1)
+        blue_knight_run2 = [pygame.transform.flip(player, True, False) for player in blue_knight_run]
 
         self.tile_list = []
 
@@ -98,6 +102,29 @@ class Level:
             for j, col in enumerate(row):
                 x_val = j * tile_size
                 y_val = i * tile_size
+
+                if col == "1":
+                    img_rect = stone_wall.get_rect()
+                    img_rect.x = x_val
+                    img_rect.y = y_val
+                    tile = (stone_wall, img_rect)
+                    self.tile_list.append(tile)
+                elif col == "2":
+                    img_rect = dark_stone_block.get_rect()
+                    img_rect.x = x_val
+                    img_rect.y = y_val
+                    tile = (dark_stone_block, img_rect)
+                    self.tile_list.append(tile)
+                elif col == "3":
+                    img_rect = blue_knight_run[1].get_rect()
+                    img_rect.x = x_val
+                    img_rect.y = y_val
+                    tile = (blue_knight_run[1], img_rect)
+                    self.tile_list.append(tile)
+
+    def draw(self, display):
+        for tile in self.tile_list:
+            display.blit(tile[0], tile[1])
 
 
 class Player(pygame.sprite.Sprite):
