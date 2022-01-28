@@ -82,19 +82,12 @@ class Level:
     def __init__(self, level_layout, tile_size):
         cpa = SpriteSheet('assets/cpa_.png')
         dr2a = SpriteSheet('assets/dr2a.png')
-        blue_knight_s = SpriteSheet('assets/BlueKnight.png')
         stone_wall = cpa.image_at((0, 192, 64, 64))
         stone_wall = pygame.transform.scale(stone_wall, (tile_size, tile_size))
         wood_door = cpa.image_at((194, 385, 58, 126))
         wood_door = pygame.transform.scale(wood_door, (tile_size, tile_size * 2))
         dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
         dark_stone_block = pygame.transform.scale(dark_stone_block, (tile_size, tile_size))
-
-        blue_knight1 = blue_knight_s.image_at((42, 570, 39, 50), -1)
-        blue_knight1 = pygame.transform.flip(blue_knight1, True, False)
-
-        blue_knight_run = blue_knight_s.load_strip((41, 385, 48, 48), 10, -1)
-        blue_knight_run2 = [pygame.transform.flip(player, True, False) for player in blue_knight_run]
 
         self.tile_list = []
 
@@ -115,24 +108,65 @@ class Level:
                     img_rect.y = y_val
                     tile = (dark_stone_block, img_rect)
                     self.tile_list.append(tile)
-                elif col == "3":
-                    img_rect = blue_knight_run[1].get_rect()
-                    img_rect.x = x_val
-                    img_rect.y = y_val
-                    tile = (blue_knight_run[1], img_rect)
-                    self.tile_list.append(tile)
 
     def draw(self, display):
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
 
+    def get_layout(self):
+        return self.tile_list
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, image, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
 
+class Player:
+    def __init__(self, x, y, tile_size, tiles):
+        self.x = x
+        self.y = y
+        self.tile_size = tile_size
+        self.tiles = tiles
+        blue_knight_s = SpriteSheet('assets/BlueKnight.png')
+        self.standl = blue_knight_s.image_at((42, 570, 39, 50), -1)
+        self.standr = pygame.transform.flip(self.standl, True, False)
+        self.blue_knight_run_l = blue_knight_s.load_strip((41, 385, 48, 48), 10, -1)
+        self.blue_knight_run_r = [pygame.transform.flip(player, True, False) for player in self.blue_knight_run_l]
+        self.y_velo = 0
+        self.x_velo = 0
+        self.right = False
+        self.left = False
+        self.last = pygame.time.get_ticks()
+        self.image_delay = 100
+        self.current_frame = 0
+        self.image = self.standr
+
+    def draw(self, display):
+        display.blit(self.image, (self.x, self.y))
+
+    def update(self):
+        self.x += self.x_velo
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            now = pygame.time.get_ticks()
+            self.right = True
+            self.left = False
+            self.x_velo = 2
+            if now - self.last >= self.image_delay:
+                self.last = now
+                self.current_frame = (self.current_frame+1) % len(self.blue_knight_run_r)
+                self.image = self.blue_knight_run_r[self.current_frame]
+        elif keys[pygame.K_LEFT]:
+            now = pygame.time.get_ticks()
+            self.right = False
+            self.left = True
+            self.x_velo = -2
+            if now - self.last >= self.image_delay:
+                self.last = now
+                self.current_frame = (self.current_frame+1) % len(self.blue_knight_run_l)
+                self.image = self.blue_knight_run_l[self.current_frame]
+        else:
+            self.x_velo = 0
+            if self.right:
+                self.image = self.standr
+            elif self.left:
+                self.image = self.standl
+            self.right = False
+            self.left = False
 

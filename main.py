@@ -49,6 +49,8 @@ clock = pygame.time.Clock()
 running = True
 ########################################################################################################################
 level1 = Level(LAYOUT, tile_size)
+layout_list = level1.get_layout()
+player = Player(tile_size * 2, tile_size * 11, tile_size, layout_list)
 ########################################################################################################################
 # game loop
 while running:
@@ -59,6 +61,8 @@ while running:
 
     screen.fill(MIDNIGHT_BLUE)
     level1.draw(screen)
+    player.draw(screen)
+    player.update()
 
     # for j in range(4):
     #     for i in range(0, WIN_WIDTH//tile_size):
@@ -95,33 +99,3 @@ while running:
 
 # outside of game loop
 pygame.quit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
