@@ -119,8 +119,6 @@ class Level:
 
 class Player:
     def __init__(self, x, y, tile_size, tiles):
-        self.x = x
-        self.y = y
         self.tile_size = tile_size
         self.tiles = tiles
         blue_knight_s = SpriteSheet('assets/BlueKnight.png')
@@ -136,18 +134,25 @@ class Player:
         self.image_delay = 100
         self.current_frame = 0
         self.image = self.standr
+        self.image_rect = self.image.get_rect()
+        self.image_rect.x = x
+        self.image_rect.y = y
+        self.jumping = False
+        self.Falling = False
 
     def draw(self, display):
-        display.blit(self.image, (self.x, self.y))
+        display.blit(self.image, (self.image_rect.x, self.image_rect.y))
+        pygame.draw.rect(display, WHITE, self.image_rect, 2)
 
     def update(self):
-        self.x += self.x_velo
+        dx = 0
+        dy = 0
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
             now = pygame.time.get_ticks()
             self.right = True
             self.left = False
-            self.x_velo = 2
+            dx = 2
             if now - self.last >= self.image_delay:
                 self.last = now
                 self.current_frame = (self.current_frame+1) % len(self.blue_knight_run_r)
@@ -156,17 +161,33 @@ class Player:
             now = pygame.time.get_ticks()
             self.right = False
             self.left = True
-            self.x_velo = -2
+            dx = -2
             if now - self.last >= self.image_delay:
                 self.last = now
                 self.current_frame = (self.current_frame+1) % len(self.blue_knight_run_l)
                 self.image = self.blue_knight_run_l[self.current_frame]
         else:
-            self.x_velo = 0
+            dx = 0
             if self.right:
                 self.image = self.standr
             elif self.left:
                 self.image = self.standl
             self.right = False
             self.left = False
+
+        for tile in self.tiles:
+            if tile[1].colliderect(dx+self.image_rect.x, self.image_rect.y,
+                                   self.image_rect.width, self.image_rect.height):
+                dx = 0
+            if tile[1].colliderect(self.image_rect.x, self.image_rect.y+dy,
+                                   self.image_rect.width, self.image_rect.height):
+                if self.y_velo < 0:
+                    dy = tile[1].bottom - self.image_rect.top
+                    self.y_velo = 0
+                elif self.y_velo > 0:
+                    dy = tile[1].top - self.image_rect.bottom
+                    self.y_velo = 0
+
+        self.image_rect.x += dx
+        self.image_rect.y += dy
 
