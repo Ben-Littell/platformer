@@ -138,7 +138,7 @@ class Player:
         self.image_rect.x = x
         self.image_rect.y = y
         self.jumping = False
-        self.Falling = False
+        self.falling = False
 
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
@@ -148,7 +148,7 @@ class Player:
         dx = 0
         dy = 0
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             now = pygame.time.get_ticks()
             self.right = True
             self.left = False
@@ -157,7 +157,7 @@ class Player:
                 self.last = now
                 self.current_frame = (self.current_frame+1) % len(self.blue_knight_run_r)
                 self.image = self.blue_knight_run_r[self.current_frame]
-        elif keys[pygame.K_LEFT]:
+        elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
             now = pygame.time.get_ticks()
             self.right = False
             self.left = True
@@ -174,6 +174,17 @@ class Player:
                 self.image = self.standl
             self.right = False
             self.left = False
+        if (keys[pygame.K_UP] or keys[pygame.K_w]) and not self.jumping and not self.falling:
+            self.y_velo = -15
+            self.jumping = True
+        dy += self.y_velo
+        self.y_velo += 1
+        if self.y_velo < 0:
+            self.jumping = True
+            self.falling = False
+        else:
+            self.jumping = False
+            self.falling = True
 
         for tile in self.tiles:
             if tile[1].colliderect(dx+self.image_rect.x, self.image_rect.y,
@@ -184,10 +195,19 @@ class Player:
                 if self.y_velo < 0:
                     dy = tile[1].bottom - self.image_rect.top
                     self.y_velo = 0
+                    self.jumping = False
+                    self.falling = True
                 elif self.y_velo > 0:
                     dy = tile[1].top - self.image_rect.bottom
                     self.y_velo = 0
+                    self.falling = False
+                    self.jumping = False
 
         self.image_rect.x += dx
         self.image_rect.y += dy
 
+
+class Spikes:
+    def __init__(self, x, y, tile_size, tiles):
+        self.tiles_size = tile_size
+        self.tiles = tiles
