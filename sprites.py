@@ -78,45 +78,6 @@ class SpriteSheet:
         return self.images_at(sprite_rects, colorkey)
 
 
-class Level:
-    def __init__(self, level_layout, tile_size):
-        cpa = SpriteSheet('assets/cpa_.png')
-        dr2a = SpriteSheet('assets/dr2a.png')
-        stone_wall = cpa.image_at((0, 192, 64, 64))
-        stone_wall = pygame.transform.scale(stone_wall, (tile_size, tile_size))
-        wood_door = cpa.image_at((194, 385, 58, 126))
-        wood_door = pygame.transform.scale(wood_door, (tile_size, tile_size * 2))
-        dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
-        dark_stone_block = pygame.transform.scale(dark_stone_block, (tile_size, tile_size))
-
-        self.tile_list = []
-
-        for i, row in enumerate(level_layout):
-            for j, col in enumerate(row):
-                x_val = j * tile_size
-                y_val = i * tile_size
-
-                if col == "1":
-                    img_rect = stone_wall.get_rect()
-                    img_rect.x = x_val
-                    img_rect.y = y_val
-                    tile = (stone_wall, img_rect)
-                    self.tile_list.append(tile)
-                elif col == "2":
-                    img_rect = dark_stone_block.get_rect()
-                    img_rect.x = x_val
-                    img_rect.y = y_val
-                    tile = (dark_stone_block, img_rect)
-                    self.tile_list.append(tile)
-
-    def draw(self, display):
-        for tile in self.tile_list:
-            display.blit(tile[0], tile[1])
-
-    def get_layout(self):
-        return self.tile_list
-
-
 class Player:
     def __init__(self, x, y, tile_size, tiles):
         self.tile_size = tile_size
@@ -155,7 +116,7 @@ class Player:
             dx = 2
             if now - self.last >= self.image_delay:
                 self.last = now
-                self.current_frame = (self.current_frame+1) % len(self.blue_knight_run_r)
+                self.current_frame = (self.current_frame + 1) % len(self.blue_knight_run_r)
                 self.image = self.blue_knight_run_r[self.current_frame]
         elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
             now = pygame.time.get_ticks()
@@ -164,7 +125,7 @@ class Player:
             dx = -2
             if now - self.last >= self.image_delay:
                 self.last = now
-                self.current_frame = (self.current_frame+1) % len(self.blue_knight_run_l)
+                self.current_frame = (self.current_frame + 1) % len(self.blue_knight_run_l)
                 self.image = self.blue_knight_run_l[self.current_frame]
         else:
             dx = 0
@@ -187,10 +148,10 @@ class Player:
             self.falling = True
 
         for tile in self.tiles:
-            if tile[1].colliderect(dx+self.image_rect.x, self.image_rect.y,
+            if tile[1].colliderect(dx + self.image_rect.x, self.image_rect.y,
                                    self.image_rect.width, self.image_rect.height):
                 dx = 0
-            if tile[1].colliderect(self.image_rect.x, self.image_rect.y+dy,
+            if tile[1].colliderect(self.image_rect.x, self.image_rect.y + dy,
                                    self.image_rect.width, self.image_rect.height):
                 if self.y_velo < 0:
                     dy = tile[1].bottom - self.image_rect.top
@@ -207,7 +168,58 @@ class Player:
         self.image_rect.y += dy
 
 
+class Level:
+    def __init__(self, level_layout, tile_size):
+        cpa = SpriteSheet('assets/cpa_.png')
+        dr2a = SpriteSheet('assets/dr2a.png')
+        stone_wall = cpa.image_at((0, 192, 64, 64))
+        stone_wall = pygame.transform.scale(stone_wall, (tile_size, tile_size))
+        wood_door = cpa.image_at((194, 385, 58, 126))
+        wood_door = pygame.transform.scale(wood_door, (tile_size, tile_size * 2))
+        dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
+        dark_stone_block = pygame.transform.scale(dark_stone_block, (tile_size, tile_size))
+
+        self.tile_list = []
+        self.player_list = []
+
+        for i, row in enumerate(level_layout):
+            for j, col in enumerate(row):
+                x_val = j * tile_size
+                y_val = i * tile_size
+
+                if col == "1":
+                    img_rect = stone_wall.get_rect()
+                    img_rect.x = x_val
+                    img_rect.y = y_val
+                    tile = (stone_wall, img_rect)
+                    self.tile_list.append(tile)
+                elif col == "2":
+                    img_rect = dark_stone_block.get_rect()
+                    img_rect.x = x_val
+                    img_rect.y = y_val
+                    tile = (dark_stone_block, img_rect)
+                    self.tile_list.append(tile)
+                elif col == 'p':
+                    player = Player(x_val, y_val, tile_size, self.tile_list)
+                    self.player_list.append(player)
+
+    def draw(self, display):
+        for tile in self.tile_list:
+            display.blit(tile[0], tile[1])
+        for player in self.player_list:
+            player.update()
+            player.draw(display)
+
+    def get_layout(self):
+        return self.tile_list
+
+
 class Spikes:
     def __init__(self, x, y, tile_size, tiles):
         self.tiles_size = tile_size
         self.tiles = tiles
+
+
+class Enemies:
+    def __init__(self):
+        pass

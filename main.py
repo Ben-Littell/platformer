@@ -61,8 +61,6 @@ while running:
 
     screen.fill(MIDNIGHT_BLUE)
     level1.draw(screen)
-    player.draw(screen)
-    player.update()
 
     pygame.display.flip()
 
