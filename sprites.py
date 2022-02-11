@@ -163,7 +163,14 @@ class Player:
                     self.y_velo = 0
                     self.falling = False
                     self.jumping = False
-
+        self.x_velo = dx
+        for tile in self.tiles:
+            if self.image_rect.colliderect(tile[1].x + dx, tile[1].y, tile[1].width, tile[1].height):
+                self.x_velo = 0
+        if self.image_rect.x + self.x_velo >= WIDTH - 300:
+            dx = 0
+        if self.image_rect.x + self.x_velo <= 100:
+            dx = 0
         self.image_rect.x += dx
         self.image_rect.y += dy
 
@@ -207,6 +214,12 @@ class Level:
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
         for player in self.player_list:
+            if player.image_rect.x >= WIDTH - 341:
+                for tile in self.tile_list:
+                    tile[1].x += player.x_velo * -1
+            elif player.image_rect.x <= 141:
+                for tile in self.tile_list:
+                    tile[1].x += player.x_velo * -1
             player.update()
             player.draw(display)
 
