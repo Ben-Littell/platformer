@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+import math
 
 # This class handles sprite sheets
 # https://www.pygame.org/wiki/Spritesheet
@@ -100,6 +101,8 @@ class Player:
         self.image_rect.y = y
         self.jumping = False
         self.falling = False
+        self.deltay = 0
+        self.tile_speed = 0
 
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
@@ -163,14 +166,32 @@ class Player:
                     self.y_velo = 0
                     self.falling = False
                     self.jumping = False
-        self.x_velo = dx
-        for tile in self.tiles:
+
             if self.image_rect.colliderect(tile[1].x + dx, tile[1].y, tile[1].width, tile[1].height):
-                self.x_velo = 0
-        if self.image_rect.x + self.x_velo >= WIDTH - 300:
-            dx = 0
-        if self.image_rect.x + self.x_velo <= 100:
-            dx = 0
+                dx = 0
+                self.tile_speed = 0
+
+            # if self.image_rect.x >= WIDTH - WIDTH/4 - 2 and self.right:
+            #     self.x_velo = 0
+            #     for tile in self.tiles:
+            #         tile[1].x += self.tile_speed * -1
+            # elif self.image_rect.x <= WIDTH/6 + 2 and self.left:
+            #     self.x_velo = 0
+            #     for tile in self.tiles:
+            #         tile[1].x += self.tile_speed
+
+            if self.image_rect.x + dx >= WIDTH - WIDTH/4:
+                dx = 0
+                self.tile_speed = -2
+            elif self.image_rect.x + dx <= WIDTH/6:
+                dx = 0
+                self.tile_speed = 2
+
+            tile[1].x += self.tile_speed
+
+
+        self.x_velo = dx
+        self.deltay = dy
         self.image_rect.x += dx
         self.image_rect.y += dy
 
@@ -185,7 +206,7 @@ class Level:
         wood_door = pygame.transform.scale(wood_door, (tile_size, tile_size * 2))
         dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
         dark_stone_block = pygame.transform.scale(dark_stone_block, (tile_size, tile_size))
-
+        self.tile_speed = 2
         self.tile_list = []
         self.player_list = []
 
@@ -214,12 +235,6 @@ class Level:
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
         for player in self.player_list:
-            if player.image_rect.x >= WIDTH - 341:
-                for tile in self.tile_list:
-                    tile[1].x += player.x_velo * -1
-            elif player.image_rect.x <= 141:
-                for tile in self.tile_list:
-                    tile[1].x += player.x_velo * -1
             player.update()
             player.draw(display)
 
