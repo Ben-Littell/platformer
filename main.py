@@ -51,6 +51,7 @@ running = True
 level1 = Level(LAYOUT, tile_size)
 layout_list = level1.get_layout()
 player = Player(tile_size * 2, tile_size * 11 - 10, tile_size, layout_list)
+# up date
 ########################################################################################################################
 # game loop
 while running:

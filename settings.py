@@ -13,7 +13,7 @@ RED = (255, 0, 0)
 MIDNIGHT_BLUE = (25, 25, 112)
 
 FPS = 60
-
+# ipods
 WIN_WIDTH = 800
 WIN_HEIGHT = 600
 tile_size = 40  # width = 25, height = 18

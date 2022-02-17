@@ -179,7 +179,7 @@ class Player:
             #     self.x_velo = 0
             #     for tile in self.tiles:
             #         tile[1].x += self.tile_speed
-            # test
+
 
             if self.image_rect.x + dx >= WIDTH - WIDTH/4:
                 dx = 0
