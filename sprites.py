@@ -167,9 +167,7 @@ class Player:
                     self.falling = False
                     self.jumping = False
 
-            if self.image_rect.colliderect(tile[1].x + dx, tile[1].y, tile[1].width, tile[1].height):
-                dx = 0
-                self.tile_speed = 0
+
 
             # if self.image_rect.x >= WIDTH - WIDTH/4 - 2 and self.right:
             #     self.x_velo = 0
@@ -180,16 +178,23 @@ class Player:
             #     for tile in self.tiles:
             #         tile[1].x += self.tile_speed
 
-
-            if self.image_rect.x + dx >= WIDTH - WIDTH/4:
+            keys = pygame.key.get_pressed()
+            if self.image_rect.x + dx >= WIDTH - WIDTH/3:
                 dx = 0
                 self.tile_speed = -2
-            elif self.image_rect.x + dx <= WIDTH/6:
+            elif not keys[pygame.K_RIGHT]:
+                self.tile_speed = 0
+            # if self.image_rect.x + dx <= WIDTH/4:
+            #     dx = 0
+            #     self.tile_speed = 2
+            # elif not keys[pygame.K_LEFT]:
+            #     self.tile_speed = 0
+
+            if self.image_rect.colliderect(tile[1].x + self.tile_speed, tile[1].y, tile[1].width, tile[1].height):
+                self.tile_speed = 0
                 dx = 0
-                self.tile_speed = 2
 
             tile[1].x += self.tile_speed
-
 
         self.x_velo = dx
         self.deltay = dy
