@@ -88,6 +88,20 @@ class Player:
         self.standr = pygame.transform.flip(self.standl, True, False)
         self.blue_knight_run_l = blue_knight_s.load_strip((41, 385, 48, 48), 10, -1)
         self.blue_knight_run_r = [pygame.transform.flip(player, True, False) for player in self.blue_knight_run_l]
+        #################### ATTACK ####################
+        self.attack_left = []
+        self.blue_lattack1 = blue_knight_s.image_at((60, 159, 42, 50), -1)
+        self.attack_left.append(self.blue_lattack1)
+
+        self.blue_lattack2 = blue_knight_s.image_at((116, 159, 47, 52), -1)
+        self.attack_left.append(self.blue_lattack2)
+
+        self.blue_lattack3 = blue_knight_s.image_at((173, 156, 54, 50), -1)
+        self.attack_left.append(self.blue_lattack3)
+
+        self.blue_lattack4 = blue_knight_s.image_at((235, 149, 48, 58), -1)
+        self.attack_left.append(self.blue_lattack4)
+        ################################################
         self.y_velo = 0
         self.x_velo = 0
         self.right = False
@@ -109,6 +123,7 @@ class Player:
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
+        display.blit(self.blue_lattack4, (100, 100))
 
     def update(self):
         dx = 0
@@ -170,19 +185,27 @@ class Player:
                     self.jumping = False
 
             keys = pygame.key.get_pressed()
+            # right camera
             if self.image_rect.x + dx >= WIDTH - WIDTH/3:
                 dx = 0
                 self.tile_speed = -2
                 self.tile_right = True
-            elif not keys[pygame.K_RIGHT]:
+            elif not keys[pygame.K_RIGHT] and not self.tile_left:
                 self.tile_speed = 0
-                self.tile_right = True
-            # if self.image_rect.x + dx <= WIDTH/4:
-            #     dx = 0
-            #     self.tile_speed = 2
-            # elif not keys[pygame.K_LEFT]:
-            #     self.tile_speed = 0
+                self.tile_right = False
             if self.tile_right:
+                if self.image_rect.colliderect(tile[1].x + self.tile_speed, tile[1].y, tile[1].width, tile[1].height):
+                    dx = 0
+                    self.tile_speed = 0
+            # left camera
+            if self.image_rect.x + dx <= 100:
+                dx = 0
+                self.tile_speed = 2
+                self.tile_left = True
+            elif not keys[pygame.K_LEFT] and not self.tile_right:
+                self.tile_speed = 0
+                self.tile_left = False
+            if self.tile_left:
                 if self.image_rect.colliderect(tile[1].x + self.tile_speed, tile[1].y, tile[1].width, tile[1].height):
                     dx = 0
                     self.tile_speed = 0
