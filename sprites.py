@@ -104,6 +104,15 @@ class Player:
 
         self.blue_lattack5 = blue_knight_s.image_at((292, 160, 52, 46), -1)
         self.attack_left.append(self.blue_lattack5)
+
+        self.blue_lattack6 = blue_knight_s.image_at((347, 159, 60, 50), -1)
+        self.attack_left.append(self.blue_lattack6)
+
+        self.blue_lattack7 = blue_knight_s.image_at((414, 162, 55, 46), -1)
+        self.attack_left.append(self.blue_lattack7)
+
+        self.blue_lattack8 = blue_knight_s.image_at((486, 159, 42, 49), -1)
+        self.attack_left.append(self.blue_lattack8)
         ################################################
         self.y_velo = 0
         self.x_velo = 0
@@ -126,7 +135,7 @@ class Player:
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
-        display.blit(self.blue_lattack5, (100, 100))
+        display.blit(self.blue_lattack8, (100, 100))
 
     def update(self):
         dx = 0
