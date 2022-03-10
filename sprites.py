@@ -148,6 +148,18 @@ class Player:
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
 
+    def attack(self):
+        now = pygame.time.get_ticks()
+        if now - self.prev_update > self.frame_rate:
+            self.prev_update = now
+            self.frame += 1
+        if self.frame == len(explosion_list):
+            self.kill()
+        else:
+            self.image = explosion_list[self.frame]
+            self.rect = self.image.get_rect()
+            self.rect.center = self.kill_center
+
     def update(self):
         dx = 0
         dy = 0
@@ -191,11 +203,13 @@ class Player:
             self.falling = True
 
         if keys[pygame.K_SPACE]:
-            now = pygame.time.get_ticks()
-            if now - self.last >= self.attack_delay:
-                self.last = now
-                self.current_frame = (self.current_frame + 1) % len(self.attack_left)
-                self.image = self.attack_right[self.current_frame]
+            # now = pygame.time.get_ticks()
+            # if now - self.last >= self.attack_delay:
+            #     self.last = now
+            #     self.current_frame = (self.current_frame + 1) % len(self.attack_left)
+            #     self.image = self.attack_right[self.current_frame]
+            self.player.attack()
+
 
 
         for tile in self.tiles:
