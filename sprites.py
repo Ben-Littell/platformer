@@ -113,14 +113,25 @@ class Player:
 
         self.blue_lattack8 = blue_knight_s.image_at((486, 159, 42, 49), -1)
         self.attack_left.append(self.blue_lattack8)
+
+        self.blue_lattack9 = blue_knight_s.image_at((550, 160, 38, 48), -1)
+        self.attack_left.append(self.blue_lattack9)
+
+        self.blue_lattack10 = blue_knight_s.image_at((611, 160, 41, 50), -1)
+        self.attack_left.append(self.blue_lattack10)
+
+        self.attack_right = [pygame.transform.flip(item, True, False) for item in self.attack_left]
         ################################################
         self.y_velo = 0
         self.x_velo = 0
         self.right = False
         self.left = False
         self.last = pygame.time.get_ticks()
+        self.last_a = pygame.time.get_ticks()
         self.image_delay = 100
+        self.attack_delay = 50
         self.current_frame = 0
+        self.current_attack = 0
         self.image = self.standr
         self.image_rect = self.image.get_rect()
         self.image_rect.x = x
@@ -131,17 +142,17 @@ class Player:
         self.tile_speed = 0
         self.tile_right = False
         self.tile_left = False
+        self.attack = False
 
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
-        display.blit(self.blue_lattack8, (100, 100))
 
     def update(self):
         dx = 0
         dy = 0
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        if keys[pygame.K_RIGHT]:
             now = pygame.time.get_ticks()
             self.right = True
             self.left = False
@@ -150,15 +161,15 @@ class Player:
                 self.last = now
                 self.current_frame = (self.current_frame + 1) % len(self.blue_knight_run_r)
                 self.image = self.blue_knight_run_r[self.current_frame]
-        elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        elif keys[pygame.K_LEFT]:
             now = pygame.time.get_ticks()
             self.right = False
             self.left = True
             dx = -2
-            if now - self.last >= self.image_delay:
-                self.last = now
-                self.current_frame = (self.current_frame + 1) % len(self.blue_knight_run_l)
-                self.image = self.blue_knight_run_l[self.current_frame]
+            if now - self.last_a >= self.image_delay:
+                self.last_a = now
+                self.current_attack = (self.current_attack + 1) % len(self.blue_knight_run_l)
+                self.image = self.blue_knight_run_l[self.current_attack]
         else:
             dx = 0
             if self.right:
@@ -178,6 +189,14 @@ class Player:
         else:
             self.jumping = False
             self.falling = True
+
+        if keys[pygame.K_SPACE]:
+            now = pygame.time.get_ticks()
+            if now - self.last >= self.attack_delay:
+                self.last = now
+                self.current_frame = (self.current_frame + 1) % len(self.attack_left)
+                self.image = self.attack_right[self.current_frame]
+
 
         for tile in self.tiles:
             if tile[1].colliderect(dx + self.image_rect.x, self.image_rect.y,
