@@ -80,8 +80,7 @@ class SpriteSheet:
 
 
 class Player:
-    def __init__(self, x, y, tile_size, tiles):
-        self.tile_size = tile_size
+    def __init__(self, x, y, tiles):
         self.tiles = tiles
         blue_knight_s = SpriteSheet('assets/BlueKnight.png')
         self.standl = blue_knight_s.image_at((42, 570, 39, 50), -1)
@@ -129,7 +128,7 @@ class Player:
         self.last = pygame.time.get_ticks()
         self.last_a = pygame.time.get_ticks()
         self.image_delay = 100
-        self.attack_delay = 50
+        self.attack_delay = 40
         self.current_frame = 0
         self.current_attack = 0
         self.image = self.standr
@@ -142,7 +141,7 @@ class Player:
         self.tile_speed = 0
         self.tile_right = False
         self.tile_left = False
-        self.attack = False
+        self.attacks = False
 
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
@@ -150,15 +149,18 @@ class Player:
 
     def attack(self):
         now = pygame.time.get_ticks()
-        if now - self.prev_update > self.frame_rate:
-            self.prev_update = now
-            self.frame += 1
-        if self.frame == len(explosion_list):
-            self.kill()
-        else:
-            self.image = explosion_list[self.frame]
-            self.rect = self.image.get_rect()
-            self.rect.center = self.kill_center
+        if self.right or self.image == self.standr or self.image in self.attack_right:
+            if now - self.last >= self.attack_delay:
+                self.last = now
+                self.current_frame = (self.current_frame + 1) % len(self.attack_right)
+                self.image = self.attack_right[self.current_frame]
+                self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
+        elif self.left or self.image == self.standl or self.image in self.attack_left:
+            if now - self.last >= self.attack_delay:
+                self.last = now
+                self.current_frame = (self.current_frame + 1) % len(self.attack_left)
+                self.image = self.attack_left[self.current_frame]
+                self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
 
     def update(self):
         dx = 0
@@ -173,6 +175,7 @@ class Player:
                 self.last = now
                 self.current_frame = (self.current_frame + 1) % len(self.blue_knight_run_r)
                 self.image = self.blue_knight_run_r[self.current_frame]
+                self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y, w=39, h=50)
         elif keys[pygame.K_LEFT]:
             now = pygame.time.get_ticks()
             self.right = False
@@ -182,12 +185,15 @@ class Player:
                 self.last_a = now
                 self.current_attack = (self.current_attack + 1) % len(self.blue_knight_run_l)
                 self.image = self.blue_knight_run_l[self.current_attack]
+                self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y, w=39, h=50)
         else:
             dx = 0
             if self.right:
                 self.image = self.standr
+                self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
             elif self.left:
                 self.image = self.standl
+                self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
             self.right = False
             self.left = False
         if (keys[pygame.K_UP] or keys[pygame.K_w]) and not self.jumping and not self.falling:
@@ -203,14 +209,16 @@ class Player:
             self.falling = True
 
         if keys[pygame.K_SPACE]:
-            # now = pygame.time.get_ticks()
-            # if now - self.last >= self.attack_delay:
-            #     self.last = now
-            #     self.current_frame = (self.current_frame + 1) % len(self.attack_left)
-            #     self.image = self.attack_right[self.current_frame]
-            self.player.attack()
-
-
+            self.attacks = True
+            Player.attack(self)
+        else:
+            if self.image in self.attack_left:
+                self.image = self.standl
+                self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
+            elif self.image in self.attack_right:
+                self.image = self.standr
+                self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
+            self.attacks = False
 
         for tile in self.tiles:
             if tile[1].colliderect(dx + self.image_rect.x, self.image_rect.y,
@@ -296,7 +304,7 @@ class Level:
                     tile = (dark_stone_block, img_rect)
                     self.tile_list.append(tile)
                 elif col == 'p':
-                    player = Player(x_val, y_val, tile_size, self.tile_list)
+                    player = Player(x_val, y_val, self.tile_list)
                     self.player_list.append(player)
 
     def draw(self, display):
