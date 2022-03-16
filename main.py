@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 from settings import *
-from sprites import SpriteSheet, Player, Level
+from sprites import Player, Level, Enemies
 
 pygame.init()
 
@@ -32,15 +32,6 @@ pygame.display.set_caption('Animation Intro')
 bg_image = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
 
-# card = SpriteSheet('assets/deck_of_cards.png')
-# x_margin = 11
-# y_margin = 2
-# x_pad = 22
-# y_pad = 4
-
-# card_list = card.load_grid_images(4, 14, x_margin, x_pad, y_margin, y_pad)
-# print(card_list)
-# ace_hearts = card.image_at((11, 2, 43, 59))
 ########################################## SPRITE GROUPS ###############################################################
 
 ########################################################################################################################
@@ -50,8 +41,7 @@ running = True
 ########################################################################################################################
 level1 = Level(LAYOUT, tile_size)
 layout_list = level1.get_layout()
-player = Player(tile_size * 2, tile_size * 11 - 10, layout_list)
-# up date
+
 ########################################################################################################################
 # game loop
 while running:

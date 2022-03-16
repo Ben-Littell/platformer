@@ -82,6 +82,7 @@ class SpriteSheet:
 class Player:
     def __init__(self, x, y, tiles):
         self.tiles = tiles
+        # self.tiles, self.enemy_list = Level.get_layout(self)
         blue_knight_s = SpriteSheet('assets/BlueKnight.png')
         self.standl = blue_knight_s.image_at((42, 570, 39, 50), -1)
         self.standr = pygame.transform.flip(self.standl, True, False)
@@ -128,7 +129,7 @@ class Player:
         self.last = pygame.time.get_ticks()
         self.last_a = pygame.time.get_ticks()
         self.image_delay = 100
-        self.attack_delay = 40
+        self.attack_delay = 75
         self.current_frame = 0
         self.current_attack = 0
         self.image = self.standr
@@ -239,7 +240,7 @@ class Player:
 
             keys = pygame.key.get_pressed()
             # right camera
-            if self.image_rect.x + dx >= WIDTH - WIDTH/3:
+            if self.image_rect.x + dx >= WIDTH - WIDTH / 3:
                 dx = 0
                 self.tile_speed = -2
                 self.tile_right = True
@@ -285,6 +286,7 @@ class Level:
         self.tile_speed = 2
         self.tile_list = []
         self.player_list = []
+        self.enemy_list = []
 
         for i, row in enumerate(level_layout):
             for j, col in enumerate(row):
@@ -306,6 +308,12 @@ class Level:
                 elif col == 'p':
                     player = Player(x_val, y_val, self.tile_list)
                     self.player_list.append(player)
+                elif col == 'e':
+                    enemy = Enemies(x_val, y_val, self.tile_list)
+                    self.enemy_list.append(enemy)
+
+    def get_layout(self):
+        return self.tile_list, self.enemy_list
 
     def draw(self, display):
         for tile in self.tile_list:
@@ -313,9 +321,8 @@ class Level:
         for player in self.player_list:
             player.update()
             player.draw(display)
-
-    def get_layout(self):
-        return self.tile_list
+        for enemy in self.enemy_list:
+            enemy.draw(display)
 
 
 class Spikes:
@@ -325,5 +332,18 @@ class Spikes:
 
 
 class Enemies:
-    def __init__(self):
-        pass
+    def __init__(self, x, y, tile_list):
+        self.tile_list = tile_list
+        red_knight_s = SpriteSheet('assets/RedKnight.png')
+        self.standl = red_knight_s.image_at((42, 570, 39, 50), -1)
+        self.standr = pygame.transform.flip(self.standl, True, False)
+        self.red_knight_run_l = red_knight_s.load_strip((41, 385, 48, 48), 10, -1)
+        self.red_knight_run_r = [pygame.transform.flip(enemy, True, False) for enemy in self.red_knight_run_l]
+        self.image = self.standl
+        self.image_rect = self.image.get_rect()
+        self.image_rect.x = x
+        self.image_rect.y = y
+
+    def draw(self, display):
+        display.blit(self.image, (self.image_rect.x, self.image_rect.y))
+        pygame.draw.rect(display, WHITE, self.image_rect, 2)
