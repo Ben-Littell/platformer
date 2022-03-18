@@ -80,7 +80,9 @@ class SpriteSheet:
 
 
 class Player:
-    def __init__(self, x, y, tiles):
+    def __init__(self, x, y, tiles, enemies=None):
+        if enemies is None:
+            enemies = []
         self.tiles = tiles
         # self.tiles, self.enemy_list = Level.get_layout(self)
         blue_knight_s = SpriteSheet('assets/BlueKnight.png')
@@ -143,10 +145,13 @@ class Player:
         self.tile_right = False
         self.tile_left = False
         self.attacks = False
+        self.enemy_list = enemies
 
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
+        for item in self.enemy_list:
+            print(item)
 
     def attack(self):
         now = pygame.time.get_ticks()
@@ -156,6 +161,12 @@ class Player:
                 self.current_frame = (self.current_frame + 1) % len(self.attack_right)
                 self.image = self.attack_right[self.current_frame]
                 self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
+                for tile in self.tiles:
+                    if self.image_rect.colliderect(tile[1].x, tile[1].y, tile[1].width, tile[1].height):
+                        self.attack = False
+                        self.image = self.standr
+                        self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
+                        self.x_velo = 0
         elif self.left or self.image == self.standl or self.image in self.attack_left:
             if now - self.last >= self.attack_delay:
                 self.last = now
@@ -197,6 +208,7 @@ class Player:
                 self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
             self.right = False
             self.left = False
+
         if (keys[pygame.K_UP] or keys[pygame.K_w]) and not self.jumping and not self.falling:
             self.y_velo = -15
             self.jumping = True
@@ -283,10 +295,13 @@ class Level:
         wood_door = pygame.transform.scale(wood_door, (tile_size, tile_size * 2))
         dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
         dark_stone_block = pygame.transform.scale(dark_stone_block, (tile_size, tile_size))
+        red_knight_s = SpriteSheet('assets/RedKnight.png')
+        red_standl = red_knight_s.image_at((42, 570, 39, 50), -1)
         self.tile_speed = 2
         self.tile_list = []
         self.player_list = []
         self.enemy_list = []
+        self.enemy_rects = []
 
         for i, row in enumerate(level_layout):
             for j, col in enumerate(row):
@@ -309,16 +324,25 @@ class Level:
                     player = Player(x_val, y_val, self.tile_list)
                     self.player_list.append(player)
                 elif col == 'e':
+                    img_rect = red_standl.get_rect()
+                    img_rect.x = x_val
+                    img_rect.y = y_val
+                    tile = (red_standl, img_rect)
+                    self.enemy_rects.append(tile)
                     enemy = Enemies(x_val, y_val, self.tile_list)
                     self.enemy_list.append(enemy)
 
     def get_layout(self):
-        return self.tile_list, self.enemy_list
+        return self.tile_list
+
+    def get_enemies(self):
+        return self.enemy_rects
 
     def draw(self, display):
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
         for player in self.player_list:
+            player.enemy_list = self.enemy_list
             player.update()
             player.draw(display)
         for enemy in self.enemy_list:
