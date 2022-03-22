@@ -48,7 +48,7 @@ class SpriteSheet:
         """Load a grid of images.
         x_margin is the space between the top of the sheet and top of the first
         row. x_padding is space between rows. Assumes symmetrical padding on
-        left and right.  Same reasoning for y. Calls self.images_at() to get a
+        left and switch.  Same reasoning for y. Calls self.images_at() to get a
         list of images.
         """
 
@@ -249,7 +249,7 @@ class Player:
                     self.jumping = False
 
             keys = pygame.key.get_pressed()
-            # right camera
+            # switch camera
             if self.image_rect.x + dx >= WIDTH - WIDTH / 3:
                 dx = 0
                 self.tile_speed = -2
@@ -322,11 +322,6 @@ class Level:
                     player = Player(x_val, y_val, self.tile_list)
                     self.player_list.append(player)
                 elif col == 'e':
-                    # img_rect = red_standl.get_rect()
-                    # img_rect.x = x_val
-                    # img_rect.y = y_val
-                    # tile = (red_standl, img_rect)
-                    # self.enemy_rects.append(tile)
                     enemy = Enemies(x_val, y_val, self.tile_list)
                     self.enemy_list.append(enemy)
 
@@ -345,6 +340,7 @@ class Level:
             player.draw(display)
         for enemy in self.enemy_list:
             enemy.draw(display)
+            enemy.update()
 
 
 class Spikes:
@@ -365,7 +361,39 @@ class Enemies:
         self.image_rect = self.image.get_rect()
         self.image_rect.x = x
         self.image_rect.y = y
+        self.y_velo = 0
+        self.deltay = 0
+        self.x_velo = 0
+        self.last = pygame.time.get_ticks()
+        self.run_distance = 1000
+        self.switch = 1
 
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
+
+    def update(self):
+        dx = 0
+        dy = 0
+        for tile in self.tile_list:
+            if self.image_rect.colliderect(tile[1].x, tile[1].y, tile[1].width, tile[1].height):
+                dx = abs(self.image_rect.x - tile[1].x)
+                dy = -2
+        self.image_rect.x += dx
+        self.image_rect.y += dy
+        now = pygame.time.get_ticks()
+        if now - self.last >= self.run_distance:
+            self.switch *= -1
+            self.last = now
+        if self.switch > 0:
+            dx = 2
+        else:
+            dx = -2
+
+        self.x_velo = dx
+        self.deltay = dy
+        self.image_rect.x += dx
+        self.image_rect.y += dy
+
+
+

@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 from settings import *
-from sprites import Player, Level, Enemies
+from sprites import Level
 
 pygame.init()
 
@@ -39,7 +39,7 @@ clock = pygame.time.Clock()
 
 running = True
 ########################################################################################################################
-level1 = Level(LAYOUT, tile_size)
+level1 = Level(LAYOUT1, tile_size)
 layout_list = level1.get_layout()
 
 ########################################################################################################################
