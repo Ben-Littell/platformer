@@ -150,8 +150,6 @@ class Player:
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
-        for item in self.enemy_list:
-            print(item)
 
     def attack(self):
         now = pygame.time.get_ticks()
@@ -324,11 +322,11 @@ class Level:
                     player = Player(x_val, y_val, self.tile_list)
                     self.player_list.append(player)
                 elif col == 'e':
-                    img_rect = red_standl.get_rect()
-                    img_rect.x = x_val
-                    img_rect.y = y_val
-                    tile = (red_standl, img_rect)
-                    self.enemy_rects.append(tile)
+                    # img_rect = red_standl.get_rect()
+                    # img_rect.x = x_val
+                    # img_rect.y = y_val
+                    # tile = (red_standl, img_rect)
+                    # self.enemy_rects.append(tile)
                     enemy = Enemies(x_val, y_val, self.tile_list)
                     self.enemy_list.append(enemy)
 
@@ -336,7 +334,7 @@ class Level:
         return self.tile_list
 
     def get_enemies(self):
-        return self.enemy_rects
+        return self.enemy_list
 
     def draw(self, display):
         for tile in self.tile_list:
