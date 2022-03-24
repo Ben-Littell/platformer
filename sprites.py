@@ -365,8 +365,13 @@ class Enemies:
         self.deltay = 0
         self.x_velo = 0
         self.last = pygame.time.get_ticks()
-        self.run_distance = 1000
+        self.run_distance = 1200
         self.switch = 1
+        self.right = False
+        self.left = False
+        self.delay_run = 75
+        self.last_run = pygame.time.get_ticks()
+        self.image_numb = 0
 
     def draw(self, display):
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
@@ -387,8 +392,28 @@ class Enemies:
             self.last = now
         if self.switch > 0:
             dx = 2
+            self.right = True
+            self.left = False
         else:
             dx = -2
+            self.right = False
+            self.left = True
+        if self.right:
+            self.image = self.red_knight_run_r[self.image_numb]
+            now = pygame.time.get_ticks()
+            if now - self.delay_run >= self.last_run:
+                self.last_run = now
+                self.image_numb += 1
+                if self.image_numb >= len(self.red_knight_run_r):
+                    self.image_numb = 0
+        elif self.left:
+            self.image = self.red_knight_run_l[self.image_numb]
+            now = pygame.time.get_ticks()
+            if now - self.delay_run >= self.last_run:
+                self.last_run = now
+                self.image_numb += 1
+                if self.image_numb >= len(self.red_knight_run_l):
+                    self.image_numb = 0
 
         self.x_velo = dx
         self.deltay = dy
