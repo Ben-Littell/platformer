@@ -335,7 +335,6 @@ class Level:
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
         for player in self.player_list:
-            player.enemy_list = self.enemy_list
             player.update()
             player.draw(display)
         for enemy in self.enemy_list:

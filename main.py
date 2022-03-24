@@ -5,7 +5,6 @@ from settings import *
 from sprites import Level
 
 pygame.init()
-
 # colors in RGB
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
