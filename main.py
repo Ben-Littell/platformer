@@ -28,8 +28,8 @@ pygame.init()
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption('Animation Intro')
 
-bg_image = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
+# bg_image = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+# bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
 
 ########################################## SPRITE GROUPS ###############################################################
 
@@ -40,7 +40,7 @@ running = True
 ########################################################################################################################
 level1 = Level(LAYOUT1, tile_size)
 layout_list = level1.get_layout()
-
+bg_image = pygame.image.load('assets/Dungeon.jpg')
 ########################################################################################################################
 # game loop
 while running:
@@ -49,8 +49,9 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    screen.fill(MIDNIGHT_BLUE)
+    screen.blit(bg_image, (0, 0))
     level1.draw(screen)
+    level1.update()
 
     pygame.display.flip()
 

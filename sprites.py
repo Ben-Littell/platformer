@@ -319,8 +319,8 @@ class Level:
                     tile = (dark_stone_block, img_rect)
                     self.tile_list.append(tile)
                 elif col == 'p':
-                    player = Player(x_val, y_val, self.tile_list)
-                    self.player_list.append(player)
+                    self.player = Player(x_val, y_val, self.tile_list)
+                    # self.player_list.append(self.player)
                 elif col == 'e':
                     enemy = Enemies(x_val, y_val, self.tile_list)
                     self.enemy_list.append(enemy)
@@ -334,12 +334,28 @@ class Level:
     def draw(self, display):
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
-        for player in self.player_list:
-            player.update()
-            player.draw(display)
+        # for player in self.player_list:
+        self.player.draw(display)
         for enemy in self.enemy_list:
             enemy.draw(display)
+
+    def update(self):
+        # for player in self.player_list:
+        self.player.update()
+        for enemy in self.enemy_list:
             enemy.update()
+            if self.player.tile_right:
+                enemy.image_rect.x += -2
+            elif self.player.tile_left:
+                enemy.image_rect.x += 2
+            if enemy.image_rect.colliderect(self.player.image_rect.x,
+                                            self.player.image_rect.y,
+                                            self.player.image_rect.width,
+                                            self.player.image_rect.height):
+                if self.player.attacks:
+                    self.enemy_list.remove(enemy)
+                else:
+                    print('hi')
 
 
 class Spikes:
