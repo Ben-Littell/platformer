@@ -148,6 +148,7 @@ class Player:
         self.enemy_list = enemies
 
     def draw(self, display):
+        # draws the player to the display
         display.blit(self.image, (self.image_rect.x, self.image_rect.y))
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
 
@@ -296,16 +297,18 @@ class Level:
         red_knight_s = SpriteSheet('assets/RedKnight.png')
         red_standl = red_knight_s.image_at((42, 570, 39, 50), -1)
         self.tile_speed = 2
+        self.layout = level_layout
+        self.tile_size = tile_size
         self.tile_list = []
         self.player_list = []
         self.enemy_list = []
         self.enemy_rects = []
+        self.collided = False
 
         for i, row in enumerate(level_layout):
             for j, col in enumerate(row):
                 x_val = j * tile_size
                 y_val = i * tile_size
-
                 if col == "1":
                     img_rect = stone_wall.get_rect()
                     img_rect.x = x_val
@@ -324,6 +327,12 @@ class Level:
                 elif col == 'e':
                     enemy = Enemies(x_val, y_val, self.tile_list)
                     self.enemy_list.append(enemy)
+                elif col == 'd':
+                    img_rect = wood_door.get_rect()
+                    img_rect.x = x_val
+                    img_rect.y = y_val
+                    tile = (wood_door, img_rect)
+                    self.tile_list.append(tile)
 
     def get_layout(self):
         return self.tile_list
@@ -339,7 +348,7 @@ class Level:
         for enemy in self.enemy_list:
             enemy.draw(display)
 
-    def update(self):
+    def update(self, display):
         # for player in self.player_list:
         self.player.update()
         for enemy in self.enemy_list:
@@ -355,7 +364,10 @@ class Level:
                 if self.player.attacks:
                     self.enemy_list.remove(enemy)
                 else:
-                    print('hi')
+                    self.collided = True
+        if self.collided:
+            self.__init__(self.layout, self.tile_size)
+            self.collided = False
 
 
 class Spikes:

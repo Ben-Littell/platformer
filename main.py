@@ -51,7 +51,7 @@ while running:
 
     screen.blit(bg_image, (0, 0))
     level1.draw(screen)
-    level1.update()
+    level1.update(screen)
 
     pygame.display.flip()
 
