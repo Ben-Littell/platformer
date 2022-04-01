@@ -84,13 +84,14 @@ class Player:
         if enemies is None:
             enemies = []
         self.tiles = tiles
-        # self.tiles, self.enemy_list = Level.get_layout(self)
-        blue_knight_s = SpriteSheet('assets/BlueKnight.png')
+        # stand and run images
+        blue_knight_s = SpriteSheet('assets/BlueKnight.png')  # initialize spritesheet for blue knight
         self.standl = blue_knight_s.image_at((42, 570, 39, 50), -1)
         self.standr = pygame.transform.flip(self.standl, True, False)
         self.blue_knight_run_l = blue_knight_s.load_strip((41, 385, 48, 48), 10, -1)
         self.blue_knight_run_r = [pygame.transform.flip(player, True, False) for player in self.blue_knight_run_l]
         #################### ATTACK ####################
+        # attack images
         self.attack_left = []
         self.blue_lattack1 = blue_knight_s.image_at((60, 159, 42, 50), -1)
         self.attack_left.append(self.blue_lattack1)
@@ -130,10 +131,10 @@ class Player:
         self.left = False
         self.last = pygame.time.get_ticks()
         self.last_a = pygame.time.get_ticks()
-        self.image_delay = 100
-        self.attack_delay = 75
-        self.current_frame = 0
-        self.current_attack = 0
+        self.image_delay = 100  # animation image change delay
+        self.attack_delay = 75  # attack image animation delay
+        self.current_frame = 0  # counter for running
+        self.current_attack = 0  # counter for attacking
         self.image = self.standr
         self.image_rect = self.image.get_rect()
         self.image_rect.x = x
@@ -153,6 +154,7 @@ class Player:
         pygame.draw.rect(display, WHITE, self.image_rect, 2)
 
     def attack(self):
+        # attack animation
         now = pygame.time.get_ticks()
         if self.right or self.image == self.standr or self.image in self.attack_right:
             if now - self.last >= self.attack_delay:
@@ -161,6 +163,7 @@ class Player:
                 self.image = self.attack_right[self.current_frame]
                 self.image_rect = self.image.get_rect(x=self.image_rect.x, y=self.image_rect.y)
                 for tile in self.tiles:
+                    # collision with layout
                     if self.image_rect.colliderect(tile[1].x, tile[1].y, tile[1].width, tile[1].height):
                         self.attack = False
                         self.image = self.standr
@@ -332,7 +335,7 @@ class Level:
                     img_rect.x = x_val
                     img_rect.y = y_val
                     tile = (wood_door, img_rect)
-                    self.tile_list.append(tile)
+                    self.door = tile
 
     def get_layout(self):
         return self.tile_list
@@ -340,13 +343,18 @@ class Level:
     def get_enemies(self):
         return self.enemy_list
 
+    def get_door(self):
+        return self.door_list
+
     def draw(self, display):
+        display.blit(self.door[0], self.door[1])
         for tile in self.tile_list:
             display.blit(tile[0], tile[1])
         # for player in self.player_list:
         self.player.draw(display)
         for enemy in self.enemy_list:
             enemy.draw(display)
+
 
     def update(self, display):
         # for player in self.player_list:
@@ -368,6 +376,12 @@ class Level:
         if self.collided:
             self.__init__(self.layout, self.tile_size)
             self.collided = False
+
+        if self.player.tile_right:
+            self.door[1].x += self.player.tile_speed
+        elif self.player.tile_left:
+            self.door[1].x += self.player.tile_speed
+
 
 
 class Spikes:
@@ -418,11 +432,11 @@ class Enemies:
             self.switch *= -1
             self.last = now
         if self.switch > 0:
-            dx = 2
+            dx = 3
             self.right = True
             self.left = False
         else:
-            dx = -2
+            dx = -3
             self.right = False
             self.left = True
         if self.right:
@@ -446,6 +460,3 @@ class Enemies:
         self.deltay = dy
         self.image_rect.x += dx
         self.image_rect.y += dy
-
-
-
