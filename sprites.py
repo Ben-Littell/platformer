@@ -291,6 +291,9 @@ class Level:
     def __init__(self, level_layout, tile_size):
         cpa = SpriteSheet('assets/cpa_.png')
         dr2a = SpriteSheet('assets/dr2a.png')
+        spap1 = SpriteSheet('assets/spap1.png')
+        key = spap1.image_at((6, 329, 53, 28), -1)
+        key = pygame.transform.scale(key, (35, 22))
         stone_wall = cpa.image_at((0, 192, 64, 64))
         stone_wall = pygame.transform.scale(stone_wall, (tile_size, tile_size))
         wood_door = cpa.image_at((194, 385, 58, 126))
@@ -307,6 +310,10 @@ class Level:
         self.enemy_list = []
         self.enemy_rects = []
         self.collided = False
+        self.key_list = []
+        self.key_numb = 0
+        self.key_collect = 0
+        self.end_level = False
 
         for i, row in enumerate(level_layout):
             for j, col in enumerate(row):
@@ -336,15 +343,19 @@ class Level:
                     img_rect.y = y_val
                     tile = (wood_door, img_rect)
                     self.door = tile
+                elif col == 'k':
+                    img_rect = key.get_rect()
+                    img_rect.x = x_val
+                    img_rect.y = y_val
+                    tile = (key, img_rect)
+                    self.key_numb += 1
+                    self.key_list.append(tile)
 
     def get_layout(self):
         return self.tile_list
 
     def get_enemies(self):
         return self.enemy_list
-
-    def get_door(self):
-        return self.door_list
 
     def draw(self, display):
         display.blit(self.door[0], self.door[1])
@@ -354,10 +365,10 @@ class Level:
         self.player.draw(display)
         for enemy in self.enemy_list:
             enemy.draw(display)
-
+        for key in self.key_list:
+            display.blit(key[0], key[1])
 
     def update(self, display):
-        # for player in self.player_list:
         self.player.update()
         for enemy in self.enemy_list:
             enemy.update()
@@ -365,23 +376,39 @@ class Level:
                 enemy.image_rect.x += -2
             elif self.player.tile_left:
                 enemy.image_rect.x += 2
+            # checks enemy/player collision
             if enemy.image_rect.colliderect(self.player.image_rect.x,
                                             self.player.image_rect.y,
                                             self.player.image_rect.width,
                                             self.player.image_rect.height):
                 if self.player.attacks:
-                    self.enemy_list.remove(enemy)
+                    self.enemy_list.remove(enemy)  # deletes enemy if killed
                 else:
                     self.collided = True
         if self.collided:
-            self.__init__(self.layout, self.tile_size)
+            self.__init__(self.layout, self.tile_size)  # resets the level
             self.collided = False
-
-        if self.player.tile_right:
+        if self.player.tile_right:  # moves key and door when player on right layout shift
             self.door[1].x += self.player.tile_speed
-        elif self.player.tile_left:
+            for key in self.key_list:
+                key[1].x += self.player.tile_speed
+        elif self.player.tile_left:  # moves key and door when player on left layout shift
             self.door[1].x += self.player.tile_speed
-
+            for key in self.key_list:
+                key[1].x += self.player.tile_speed
+        for key in self.key_list:
+            if key[1].colliderect(self.player.image_rect.x,
+                                            self.player.image_rect.y,
+                                            self.player.image_rect.width,
+                                            self.player.image_rect.height):
+                self.key_collect += 1
+                self.key_list.remove(key)
+        if self.door[1].colliderect(self.player.image_rect.x,
+                                            self.player.image_rect.y,
+                                            self.player.image_rect.width,
+                                            self.player.image_rect.height):
+            if self.key_numb == self.key_collect:
+                self.end_level = True
 
 
 class Spikes:
