@@ -409,6 +409,7 @@ class Level:
                                             self.player.image_rect.height):
             if self.key_numb == self.key_collect:
                 self.end_level = True
+                print(self.end_level)
 
 
 class Spikes:

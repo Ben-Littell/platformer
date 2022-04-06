@@ -28,6 +28,7 @@ pygame.init()
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption('Animation Intro')
 
+
 # bg_image = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 # bg_image = pygame.transform.scale(bg_image, (WIN_WIDTH, WIN_HEIGHT))
 
@@ -38,8 +39,12 @@ clock = pygame.time.Clock()
 
 running = True
 ########################################################################################################################
+level_list = []
+level_counter = 0
 level1 = Level(LAYOUT1, tile_size)
-layout_list = level1.get_layout()
+level_list.append(level1)
+level2 = Level(LAYOUT2, tile_size)
+level_list.append(level2)
 bg_image = pygame.image.load('assets/Dungeon.jpg')
 ########################################################################################################################
 # game loop
@@ -50,8 +55,12 @@ while running:
             running = False
 
     screen.blit(bg_image, (0, 0))
-    level1.draw(screen)
-    level1.update(screen)
+    c_level = level_list[level_counter]
+    c_level.draw(screen)
+    c_level.update(screen)
+    if c_level.end_level:
+            level_counter += 1
+        # c_level.end_level = False
 
     pygame.display.flip()
 
