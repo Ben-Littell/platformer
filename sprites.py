@@ -253,7 +253,7 @@ class Player:
                     self.jumping = False
 
             keys = pygame.key.get_pressed()
-            # switch camera
+            # RIGHT camera
             if self.image_rect.x + dx >= WIDTH - WIDTH / 3:
                 dx = 0
                 self.tile_speed = -2
@@ -288,7 +288,7 @@ class Player:
 
 
 class Level:
-    def __init__(self, level_layout, tile_size):
+    def __init__(self, level_layout, tile_size):  # 191 255
         cpa = SpriteSheet('assets/cpa_.png')
         dr2a = SpriteSheet('assets/dr2a.png')
         spap1 = SpriteSheet('assets/spap1.png')
@@ -298,10 +298,15 @@ class Level:
         stone_wall = pygame.transform.scale(stone_wall, (tile_size, tile_size))
         wood_door = cpa.image_at((194, 385, 58, 126))
         wood_door = pygame.transform.scale(wood_door, (tile_size, tile_size * 2))
+        o_wood_door = cpa.image_at((193, 255, 65, 130))
+        o_wood_door = pygame.transform.scale(o_wood_door, (tile_size, tile_size * 2))
         dark_stone_block = dr2a.image_at((5, 882, 128, 128), -1)
         dark_stone_block = pygame.transform.scale(dark_stone_block, (tile_size, tile_size))
         red_knight_s = SpriteSheet('assets/RedKnight.png')
         red_standl = red_knight_s.image_at((42, 570, 39, 50), -1)
+        spikes = SpriteSheet('assets/spike.png')
+        spike = spikes.image_at((0, 0, 512, 512), -1)
+        self.spike = pygame.transform.scale(spike, (tile_size/2, tile_size*.75))
         self.tile_speed = 2
         self.layout = level_layout
         self.tile_size = tile_size
@@ -342,7 +347,12 @@ class Level:
                     img_rect.x = x_val
                     img_rect.y = y_val
                     tile = (wood_door, img_rect)
+                    img_rect2 = o_wood_door.get_rect()
+                    img_rect2.x = x_val
+                    img_rect2.y = y_val
+                    tile2 = (o_wood_door, img_rect)
                     self.door = tile
+                    self.o_door = tile2
                 elif col == 'k':
                     img_rect = key.get_rect()
                     img_rect.x = x_val
@@ -367,6 +377,7 @@ class Level:
             enemy.draw(display)
         for key in self.key_list:
             display.blit(key[0], key[1])
+        display.blit(self.spike, (100, 100))
 
     def update(self, display):
         self.player.update()
@@ -398,18 +409,19 @@ class Level:
                 key[1].x += self.player.tile_speed
         for key in self.key_list:
             if key[1].colliderect(self.player.image_rect.x,
-                                            self.player.image_rect.y,
-                                            self.player.image_rect.width,
-                                            self.player.image_rect.height):
+                                  self.player.image_rect.y,
+                                  self.player.image_rect.width,
+                                  self.player.image_rect.height):
                 self.key_collect += 1
                 self.key_list.remove(key)
+        if self.key_collect == self.key_numb:
+            self.door = self.o_door
         if self.door[1].colliderect(self.player.image_rect.x,
-                                            self.player.image_rect.y,
-                                            self.player.image_rect.width,
-                                            self.player.image_rect.height):
+                                    self.player.image_rect.y,
+                                    self.player.image_rect.width,
+                                    self.player.image_rect.height):
             if self.key_numb == self.key_collect:
                 self.end_level = True
-                print(self.end_level)
 
 
 class Spikes:
