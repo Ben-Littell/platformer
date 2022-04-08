@@ -45,7 +45,11 @@ level1 = Level(LAYOUT1, tile_size)
 level_list.append(level1)
 level2 = Level(LAYOUT2, tile_size)
 level_list.append(level2)
+level3 = Level(LAYOUT3, tile_size)
+level_list.append(level3)
 bg_image = pygame.image.load('assets/Dungeon.jpg')
+########################################################################################################################
+
 ########################################################################################################################
 # game loop
 while running:

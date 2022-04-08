@@ -306,7 +306,7 @@ class Level:
         red_standl = red_knight_s.image_at((42, 570, 39, 50), -1)
         spikes = SpriteSheet('assets/spike.png')
         spike = spikes.image_at((0, 0, 512, 512), -1)
-        self.spike = pygame.transform.scale(spike, (tile_size/2, tile_size*.75))
+        # self.spike = pygame.transform.scale(spike, (tile_size/2, tile_size))
         self.tile_speed = 2
         self.layout = level_layout
         self.tile_size = tile_size
@@ -377,7 +377,7 @@ class Level:
             enemy.draw(display)
         for key in self.key_list:
             display.blit(key[0], key[1])
-        display.blit(self.spike, (100, 100))
+        # display.blit(self.spike, (100, 100))
 
     def update(self, display):
         self.player.update()
